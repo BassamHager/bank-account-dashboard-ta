@@ -4,7 +4,13 @@ Responsibility: Bassam hager
 */
 import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 
-export const useResize = (doc = document.documentElement) => {
+type UseResizeType = {
+  doc: HTMLElement | { clientWidth: number; clientHeight: number };
+};
+
+export const useResize = ({
+  doc = document.documentElement,
+}: UseResizeType) => {
   // data
   const sizeData = ref({
     width: doc.clientWidth,

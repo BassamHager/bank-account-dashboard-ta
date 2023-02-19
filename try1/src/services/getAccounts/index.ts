@@ -4,13 +4,16 @@ Responsible for the file: (Bassam Hager)
 */
 
 // data
-import accounts from "@/data/accounts.json";
+import accountsData from "@/mocks/data/accounts.json";
 // types
-import type { IAccounts } from "@/types/typings.d.ts";
+import type { IAccountGroup } from "@/types/typings";
+type Awaitable<T> = T | PromiseLike<T>;
 
-export const getAccountsService = (): Promise<IAccounts> => {
+export const getAccountsService = (): Awaitable<IAccountGroup[]> => {
+  const accountGroups = accountsData.accountGroups as IAccountGroup[];
+
   return new Promise((resolve, reject) => {
-    resolve(accounts);
+    resolve(accountGroups);
     reject("No accounts found!");
   });
 };

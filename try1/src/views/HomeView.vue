@@ -2,23 +2,30 @@
 import { onMounted, ref } from "vue";
 // services
 import { getAccountsService } from "@/services/getAccounts";
+import { getTransactionsByAccountNumber } from "@/services/getTransactions";
 // types
-import type { IAccountGroup } from "@/types/typings.d.ts";
+import type { IAccountGroup } from "@/types/typings";
+import type { IAccountStatement } from "@/types/transaction";
 // composables
 import { useResize } from "@/composable/useResize";
-const resizingData = useResize();
+const resizingData = useResize({ doc: document.documentElement });
 
 // state //
 const accounts = ref<IAccountGroup[]>();
+const accountStatement = ref<IAccountStatement>();
+
 // methods //
 onMounted(async () => {
-  const fetchedData = await getAccounts();
-  accounts.value = fetchedData.accountGroups;
+  // update accounts
+  accounts.value = await getAccountsService();
 });
 
-const getAccounts = async () => {
-  const fetchedAccounts = await getAccountsService();
-  return fetchedAccounts;
+const getAccountTransactions = async ({ account }: { account: string }) => {
+  const accountDetails = await getTransactionsByAccountNumber({
+    accountNumber: account,
+  });
+  accountStatement.value = accountDetails;
+  console.log(accountDetails);
 };
 </script>
 
@@ -35,6 +42,9 @@ const getAccounts = async () => {
         :class="`account-row ${
           resizingData.width < 600 ? 'account-column' : ''
         }`"
+        @click="
+          () => getAccountTransactions({ account: account.accountNumber })
+        "
       >
         <h2>
           {{ account.accountNumber }}
