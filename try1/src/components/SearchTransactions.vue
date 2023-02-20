@@ -1,0 +1,88 @@
+<script setup lang="ts">
+import { defineProps, defineEmits, ref, computed } from "vue";
+// props
+const { placeholder, labelText } = defineProps(["placeholder", "labelText"]);
+// emits
+const emit = defineEmits(["search"]);
+// data
+const searchTerm = ref<string>("");
+const isShowButton = computed(() => {
+  return searchTerm.value.trim().length > 0;
+});
+// methods
+const onInput = () => {
+  emit("search", searchTerm.value.toLowerCase());
+};
+const clearSearchInput = () => {
+  searchTerm.value = "";
+  // reset search results to all as default
+  onInput();
+  // focus input for the user friendliness
+  document.getElementById("search-input")?.focus();
+};
+</script>
+
+<template>
+  <div class="search-main-wrapper">
+    <label for="search-input">{{ labelText }}</label>
+    <input
+      id="search-input"
+      type="text"
+      v-model="searchTerm"
+      @input="onInput"
+      :placeholder="placeholder"
+    />
+    <button v-if="isShowButton" @click="clearSearchInput">X</button>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.search-main-wrapper {
+  margin-top: 2rem;
+  background: rgba($color: #000, $alpha: 0.3);
+  border-radius: 0.8rem;
+  display: flex;
+  align-items: center;
+  @media screen and (max-width: 40rem) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+div {
+  padding: 1rem;
+
+  label {
+    font-size: 1.6rem;
+    margin-right: 1rem;
+  }
+
+  input,
+  button {
+    padding: 1rem;
+    color: rgba($color: #fff, $alpha: 0.8);
+    font-size: 1.8rem;
+    border-radius: 0.8rem;
+    border: solid transparent;
+  }
+
+  input {
+    background: rgba($color: #fff, $alpha: 0.1);
+    &:hover,
+    &:focus {
+      border: solid rgba($color: #fff, $alpha: 0.3);
+    }
+  }
+
+  button {
+    background: rgba($color: #000, $alpha: 0.4);
+    cursor: pointer;
+    margin-left: 1rem;
+    border: solid rgba($color: #fff, $alpha: 0.1);
+    &:hover {
+      background: #000;
+      color: #fff;
+      box-shadow: 2px 2px 8px rgba($color: #fff, $alpha: 0.3);
+    }
+  }
+}
+</style>
