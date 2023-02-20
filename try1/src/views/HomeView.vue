@@ -39,7 +39,7 @@ const clearAccountStatement = () => {
       v-else
       :accountStatement="accountStatement"
       :showStatement="showAccountStatement"
-      @showList="clearAccountStatement"
+      @backToList="clearAccountStatement"
     />
   </main>
 </template>

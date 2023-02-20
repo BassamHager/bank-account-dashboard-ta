@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { defineProps, onMounted, defineEmits } from "vue";
+import { defineProps, defineEmits, computed, ref } from "vue";
+// components
+import SearchTransactions from "./SearchTransactions.vue";
+import TransactionList from "./TransactionList.vue";
+// types
+import type { ITransaction } from "@/types/transaction";
 // props
 const { accountStatement } = defineProps(["accountStatement"]);
 // emits
-const emit = defineEmits(["showList"]);
+const emit = defineEmits(["backToList"]);
+// data
+const searchingTerm = ref<string>("");
+const searchedTransactions = computed<ITransaction[]>(() =>
+  searchTransactions(searchingTerm.value.trim())
+);
 // methods
-const goBack = () => {
-  emit("showList", false);
+const goBack = (): void => {
+  emit("backToList", false);
 };
 const formatAccountNumber = (text: string) => {
   const textArr = text.split("");
@@ -14,11 +24,32 @@ const formatAccountNumber = (text: string) => {
   textArr.splice(9, 0, " ");
   return textArr.join("");
 };
+const getSearchTerm = (term: string): void => {
+  searchingTerm.value = term;
+};
+const searchTransactions = (term: string): ITransaction[] => {
+  const searched = accountStatement.transactions.filter(
+    (transaction: ITransaction) => {
+      return (
+        transaction.transactionId.toLowerCase().includes(term) ||
+        transaction.bookDate.toLowerCase().includes(term) ||
+        transaction.transactionDateTime.toLowerCase().includes(term) ||
+        transaction.creditDebitIndicator.toLowerCase().includes(term) ||
+        transaction.amount.toString().toLowerCase().includes(term) ||
+        transaction.counterpartyAccountNumber.toLowerCase().includes(term) ||
+        transaction.counterpartyName.toLowerCase().includes(term) ||
+        transaction.description.toLowerCase().includes(term)
+      );
+    }
+  );
+  return searched;
+};
 </script>
 
 <template>
   <div class="account-details-wrapper">
     <div class="account-details">
+      <!-- header: account number & balance -->
       <div class="number-and-currency-container">
         <h1>
           {{ formatAccountNumber(accountStatement.account.accountNumber) }}
@@ -32,42 +63,20 @@ const formatAccountNumber = (text: string) => {
         </h2>
       </div>
 
-      <!-- transactions history -->
-      <div class="transactions-history-container">
-        <div
-          v-for="(transaction, index) in accountStatement.transactions"
-          :key="index + transaction.transactionId"
-          class="transaction-history"
-        >
-          <h3><span>Transaction Id: </span> {{ transaction.transactionId }}</h3>
-          <h3><span>Book Date: </span> {{ transaction.bookDate }}</h3>
-          <h3><span>Transaction Id: </span> {{ transaction.transactionId }}</h3>
-          <h3>
-            <span>Transaction Date/Time: </span>
-            {{ transaction.transactionDateTime }}
-          </h3>
-          <h3>
-            <span>Credit/Debit Indicator: </span>
-            {{ transaction.creditDebitIndicator }}
-          </h3>
-          <h3>
-            <span>Amount: </span>
-            {{ transaction.amount }}
-          </h3>
-          <h3>
-            <span>Counter Party Account Number: </span>
-            {{ transaction.counterpartyAccountNumber }}
-          </h3>
-          <h3>
-            <span>Counter Party Name: </span>
-            {{ transaction.counterpartyName }}
-          </h3>
-          <h3>
-            <span>Description: </span>
-            {{ transaction.description }}
-          </h3>
-        </div>
-      </div>
+      <!-- search -->
+      <SearchTransactions
+        @search="(term:string) => getSearchTerm(term)"
+        @clear-input="goBack"
+        placeholder="Search transactions..."
+        label-text="Search Transactions"
+      />
+
+      <!-- transactions  -->
+      <TransactionList
+        v-if="searchingTerm.length > 0"
+        :transactions="searchedTransactions"
+      />
+      <TransactionList v-else :transactions="accountStatement.transactions" />
     </div>
 
     <button @click="goBack" class="back-button">Back</button>
@@ -123,27 +132,6 @@ const formatAccountNumber = (text: string) => {
 
       @media screen and (min-width: 30rem) {
         margin: auto;
-      }
-    }
-
-    .transactions-history-container {
-      margin-top: 2rem;
-
-      .transaction-history {
-        border-radius: 0.8rem;
-        background: rgba($color: #000, $alpha: 0.3);
-        border-bottom: 1px solid #000;
-        padding: 1rem;
-        margin-top: 1rem;
-
-        h3 {
-          color: rgba($color: #fff, $alpha: 0.7);
-          padding: 0.5rem 0;
-          span {
-            color: rgba($color: #fff, $alpha: 0.4);
-            margin-right: 1rem;
-          }
-        }
       }
     }
   }
