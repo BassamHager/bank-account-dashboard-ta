@@ -1,6 +1,8 @@
 import type { IAccount } from "@/types/typings.d.ts";
 
-export type ShortAccountType = Pick<IAccount, "accountNumber" | "currencyCode">;
+export type ShortAccountType = Partial<
+  Pick<IAccount, "accountNumber" | "currencyCode" | "balance" | "bookBalance">
+>;
 
 export interface ITransaction {
   transactionId: string;
