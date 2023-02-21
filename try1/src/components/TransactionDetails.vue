@@ -2,6 +2,7 @@
 import { defineProps } from "vue";
 // props
 const { transaction } = defineProps(["transaction"]);
+// methods
 </script>
 
 <template>
@@ -9,20 +10,12 @@ const { transaction } = defineProps(["transaction"]);
     <h3><span>Transaction Id: </span> {{ transaction.transactionId }}</h3>
     <h3>
       <span>Book Date: </span>
-      {{
-        new Date(transaction.bookDate).toLocaleString(undefined, {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-        })
-      }}
+      {{ new Date(transaction.bookDate).toLocaleDateString() }}
     </h3>
     <h3><span>Transaction Id: </span> {{ transaction.transactionId }}</h3>
     <h3>
       <span>Transaction Date/Time: </span>
-      {{
-        new Date(transaction.transactionDateTime).toLocaleDateString("en-US")
-      }}
+      {{ new Date(transaction.transactionDateTime).toLocaleString() }}
     </h3>
     <h3>
       <span>Credit/Debit Indicator: </span>

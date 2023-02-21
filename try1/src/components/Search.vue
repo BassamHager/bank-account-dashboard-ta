@@ -23,7 +23,7 @@ const clearSearchInput = () => {
 </script>
 
 <template>
-  <div class="search-main-wrapper">
+  <div class="search-wrapper">
     <label for="search-input">{{ labelText }}</label>
     <input
       id="search-input"
@@ -32,57 +32,60 @@ const clearSearchInput = () => {
       @input="onInput"
       :placeholder="placeholder"
     />
-    <button v-if="isShowButton" @click="clearSearchInput">X</button>
+    <button v-if="isShowButton" @click="clearSearchInput">Clear</button>
   </div>
 </template>
 
 <style scoped lang="scss">
-.search-main-wrapper {
-  margin-top: 2rem;
+.search-wrapper {
   background: rgba($color: #000, $alpha: 0.3);
-  border-radius: 0.8rem;
   display: flex;
   align-items: center;
-  @media screen and (max-width: 40rem) {
-    flex-direction: column;
-    gap: 1rem;
+  flex-direction: column;
+  border-radius: 0.8rem;
+  gap: 1rem;
+  padding: 1rem;
+  @media screen and (min-width: 40rem) {
+    flex-direction: row;
   }
 }
-div {
+
+label {
+  font-size: 1.6rem;
+  margin-right: 1rem;
+}
+
+input,
+button {
   padding: 1rem;
+  color: rgba($color: #fff, $alpha: 0.8);
+  font-size: 1.8rem;
+  border-radius: 0.8rem;
+  border: solid transparent;
+}
 
-  label {
-    font-size: 1.6rem;
-    margin-right: 1rem;
+input {
+  background: rgba($color: #fff, $alpha: 0.1);
+  min-width: 20rem;
+  &:hover,
+  &:focus {
+    border: solid rgba($color: #fff, $alpha: 0.3);
   }
-
-  input,
-  button {
-    padding: 1rem;
-    color: rgba($color: #fff, $alpha: 0.8);
-    font-size: 1.8rem;
-    border-radius: 0.8rem;
-    border: solid transparent;
+  @media screen and (min-width: 40rem) {
+    min-width: 31rem;
   }
+}
 
-  input {
-    background: rgba($color: #fff, $alpha: 0.1);
-    &:hover,
-    &:focus {
-      border: solid rgba($color: #fff, $alpha: 0.3);
-    }
-  }
-
-  button {
-    background: rgba($color: #000, $alpha: 0.4);
-    cursor: pointer;
-    margin-left: 1rem;
-    border: solid rgba($color: #fff, $alpha: 0.1);
-    &:hover {
-      background: #000;
-      color: #fff;
-      box-shadow: 2px 2px 8px rgba($color: #fff, $alpha: 0.3);
-    }
+button {
+  background: rgba($color: #000, $alpha: 0.4);
+  cursor: pointer;
+  margin-left: 1rem;
+  border: solid rgba($color: #fff, $alpha: 0.1);
+  &:hover {
+    background: #000;
+    color: #fff;
+    box-shadow: 2px 2px 8px rgba($color: #fff, $alpha: 0.3);
+    transition: 0.3s;
   }
 }
 </style>
