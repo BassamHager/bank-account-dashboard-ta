@@ -45,15 +45,21 @@ const { transaction } = defineProps(["transaction"]);
   border-radius: 0.8rem;
   background: rgba($color: #000, $alpha: 0.3);
   border-bottom: 1px solid #000;
-  padding: 1rem;
+  padding: 1.5rem;
   margin-top: 1rem;
 
   h3 {
     color: rgba($color: #fff, $alpha: 0.7);
     padding: 0.5rem 0;
+    border-bottom: 0.2rem solid rgba($color: #fff, $alpha: 0.05);
+    padding: 1.2rem;
+
     span {
       color: rgba($color: #fff, $alpha: 0.4);
       margin-right: 1rem;
+      @media screen and (max-width: 35rem) {
+        display: block;
+      }
     }
   }
 }

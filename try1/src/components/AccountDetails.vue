@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, ref, watch, onMounted } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 // components
-import SearchTransactions from "./Search.vue";
 import TransactionList from "./TransactionList.vue";
-import Filter from "./Filter.vue";
+import AccountActions from "@/components/AccountActions.vue";
 // types
 import type { ITransaction } from "@/types/transaction";
 // props
@@ -11,13 +10,7 @@ const { accountStatement } = defineProps(["accountStatement"]);
 // emits
 const emit = defineEmits(["backToList"]);
 // data
-const AccountTransactions = ref<ITransaction[]>([]);
-const searchingTerm = ref<string>("");
-const filterFrom = ref<string>("");
-const filterTo = ref<string>("");
-const transactions = computed<void>(() => {
-  return (AccountTransactions.value = processTransactions());
-});
+const transactions = ref<ITransaction[]>(accountStatement.transactions);
 // methods
 const goBack = (): void => {
   emit("backToList", false);
@@ -28,70 +21,8 @@ const formatAccountNumber = (text: string) => {
   textArr.splice(9, 0, " ");
   return textArr.join("");
 };
-const getSearchTerm = (term: string): void => {
-  searchingTerm.value = term;
-};
-const getFilterFrom = (date: string): void => {
-  filterFrom.value = date;
-};
-const getFilterTo = (date: string): void => {
-  filterTo.value = date;
-};
-const processTransactions = (): ITransaction[] => {
-  // constants
-  const term = searchingTerm.value.trim();
-  const from = filterFrom.value;
-  const to = filterTo.value;
-  const transactions = accountStatement.transactions;
-
-  // return all if no actions made
-  if (!term && !from && !to) return transactions;
-
-  // searching process
-  let searched: ITransaction[] = [];
-  let filtered: ITransaction[] = [];
-  let searchedAndFiltered: ITransaction[] = [];
-  if (term) {
-    searched = transactions.filter((transaction: ITransaction) => {
-      return (
-        transaction.transactionId.toLowerCase().includes(term) ||
-        transaction.bookDate.toLowerCase().includes(term) ||
-        transaction.transactionDateTime.toLowerCase().includes(term) ||
-        transaction.creditDebitIndicator.toLowerCase().includes(term) ||
-        transaction.amount.toString().toLowerCase().includes(term) ||
-        transaction.counterpartyAccountNumber.toLowerCase().includes(term) ||
-        transaction.counterpartyName.toLowerCase().includes(term) ||
-        transaction.description.toLowerCase().includes(term)
-      );
-    });
-  }
-
-  // filtering process
-  if (from) {
-    filtered = searched.length ? searched : transactions;
-    filtered = filtered.filter((transaction) => {
-      return transaction.bookDate >= from;
-    });
-  }
-
-  if (to) {
-    filtered = filtered.length
-      ? filtered
-      : searched.length
-      ? searched
-      : transactions;
-    filtered = filtered.filter((transaction) => {
-      return transaction.bookDate <= to;
-    });
-  }
-
-  searchedAndFiltered = filtered.length
-    ? filtered
-    : searched.length
-    ? searched
-    : transactions;
-
-  return searchedAndFiltered;
+const getProcessedTransactions = (emitValue: ITransaction[]) => {
+  if (emitValue) transactions.value = emitValue;
 };
 </script>
 
@@ -112,23 +43,20 @@ const processTransactions = (): ITransaction[] => {
         </h2>
       </div>
 
-      <div class="actions-wrapper">
-        <!-- search -->
-        <SearchTransactions
-          @search="getSearchTerm"
-          @clear-input="goBack"
-          placeholder="Search transactions..."
-          label-text="Search Transactions"
-        />
-
-        <!-- filter -->
-        <Filter @filterFrom="getFilterFrom" @filterTo="getFilterTo" />
-      </div>
+      <!-- actions -->
+      <AccountActions
+        :rawTransactions="accountStatement.transactions"
+        @updateTransactions="getProcessedTransactions"
+      />
 
       <!-- transactions  -->
+      <h2 class="total-transactions">
+        Total Transactions: {{ transactions.length }}
+      </h2>
       <TransactionList :transactions="transactions" />
     </div>
 
+    <!-- go back to account-list -->
     <button @click="goBack" class="back-button">Back</button>
   </div>
 </template>
@@ -184,19 +112,13 @@ const processTransactions = (): ITransaction[] => {
         margin: auto;
       }
     }
+  }
 
-    .actions-wrapper {
-      margin-top: 2rem;
-      border-radius: 0.8rem;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      gap: 2rem;
-
-      > div {
-        width: 100%;
-      }
-    }
+  .total-transactions {
+    // border: solid;
+    margin: 1rem 0 0;
+    color: rgba($color: #000, $alpha: 0.5);
+    text-shadow: 1px 1px 1px rgba($color: #fff, $alpha: 0.5);
   }
 
   .back-button {
@@ -223,6 +145,12 @@ const processTransactions = (): ITransaction[] => {
       box-shadow: 2px 2px 8px #fff;
       transition: 0.5s;
       text-shadow: 1px 1px 1px #000;
+    }
+
+    @media screen and (max-width: 40rem) {
+      width: 8rem;
+      height: 10rem;
+      padding-right: 1rem;
     }
   }
 }
