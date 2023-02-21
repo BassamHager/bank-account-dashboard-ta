@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, ref } from "vue";
+import { defineProps, defineEmits, computed, ref, watch, onMounted } from "vue";
 // components
-import SearchTransactions from "./SearchTransactions.vue";
+import SearchTransactions from "./Search.vue";
 import TransactionList from "./TransactionList.vue";
+import Filter from "./Filter.vue";
 // types
 import type { ITransaction } from "@/types/transaction";
 // props
@@ -10,10 +11,13 @@ const { accountStatement } = defineProps(["accountStatement"]);
 // emits
 const emit = defineEmits(["backToList"]);
 // data
+const AccountTransactions = ref<ITransaction[]>([]);
 const searchingTerm = ref<string>("");
-const searchedTransactions = computed<ITransaction[]>(() =>
-  searchTransactions(searchingTerm.value.trim())
-);
+const filterFrom = ref<string>("");
+const filterTo = ref<string>("");
+const transactions = computed<void>(() => {
+  return (AccountTransactions.value = processTransactions());
+});
 // methods
 const goBack = (): void => {
   emit("backToList", false);
@@ -27,9 +31,28 @@ const formatAccountNumber = (text: string) => {
 const getSearchTerm = (term: string): void => {
   searchingTerm.value = term;
 };
-const searchTransactions = (term: string): ITransaction[] => {
-  const searched = accountStatement.transactions.filter(
-    (transaction: ITransaction) => {
+const getFilterFrom = (date: string): void => {
+  filterFrom.value = date;
+};
+const getFilterTo = (date: string): void => {
+  filterTo.value = date;
+};
+const processTransactions = (): ITransaction[] => {
+  // constants
+  const term = searchingTerm.value.trim();
+  const from = filterFrom.value;
+  const to = filterTo.value;
+  const transactions = accountStatement.transactions;
+
+  // return all if no actions made
+  if (!term && !from && !to) return transactions;
+
+  // searching process
+  let searched: ITransaction[] = [];
+  let filtered: ITransaction[] = [];
+  let searchedAndFiltered: ITransaction[] = [];
+  if (term) {
+    searched = transactions.filter((transaction: ITransaction) => {
       return (
         transaction.transactionId.toLowerCase().includes(term) ||
         transaction.bookDate.toLowerCase().includes(term) ||
@@ -40,9 +63,35 @@ const searchTransactions = (term: string): ITransaction[] => {
         transaction.counterpartyName.toLowerCase().includes(term) ||
         transaction.description.toLowerCase().includes(term)
       );
-    }
-  );
-  return searched;
+    });
+  }
+
+  // filtering process
+  if (from) {
+    filtered = searched.length ? searched : transactions;
+    filtered = filtered.filter((transaction) => {
+      return transaction.bookDate >= from;
+    });
+  }
+
+  if (to) {
+    filtered = filtered.length
+      ? filtered
+      : searched.length
+      ? searched
+      : transactions;
+    filtered = filtered.filter((transaction) => {
+      return transaction.bookDate <= to;
+    });
+  }
+
+  searchedAndFiltered = filtered.length
+    ? filtered
+    : searched.length
+    ? searched
+    : transactions;
+
+  return searchedAndFiltered;
 };
 </script>
 
@@ -63,20 +112,21 @@ const searchTransactions = (term: string): ITransaction[] => {
         </h2>
       </div>
 
-      <!-- search -->
-      <SearchTransactions
-        @search="(term:string) => getSearchTerm(term)"
-        @clear-input="goBack"
-        placeholder="Search transactions..."
-        label-text="Search Transactions"
-      />
+      <div class="actions-wrapper">
+        <!-- search -->
+        <SearchTransactions
+          @search="getSearchTerm"
+          @clear-input="goBack"
+          placeholder="Search transactions..."
+          label-text="Search Transactions"
+        />
+
+        <!-- filter -->
+        <Filter @filterFrom="getFilterFrom" @filterTo="getFilterTo" />
+      </div>
 
       <!-- transactions  -->
-      <TransactionList
-        v-if="searchingTerm.length > 0"
-        :transactions="searchedTransactions"
-      />
-      <TransactionList v-else :transactions="accountStatement.transactions" />
+      <TransactionList :transactions="transactions" />
     </div>
 
     <button @click="goBack" class="back-button">Back</button>
@@ -132,6 +182,19 @@ const searchTransactions = (term: string): ITransaction[] => {
 
       @media screen and (min-width: 30rem) {
         margin: auto;
+      }
+    }
+
+    .actions-wrapper {
+      margin-top: 2rem;
+      border-radius: 0.8rem;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      gap: 2rem;
+
+      > div {
+        width: 100%;
       }
     }
   }
