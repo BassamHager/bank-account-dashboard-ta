@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
+// types
+import type { IAccountGroup } from "@/types/typings";
+// services
+import { getAccountsService } from "@/services/getAccounts";
+// context
+import { accounts } from "@/context/constants";
 // composables
 import { formatAccountNumber } from "@/composable/useFormatter";
 import { useResize } from "@/composable/useResize";
-const resizingData = useResize({ doc: document.documentElement });
-// props
-const { accountGroups } = defineProps(["accountGroups"]);
+const resizingData = useResize({
+  doc: document.documentElement,
+}); /* can/should be replace with a css media query. yet it's been kept for demoing */
+// data
+const accountGroups = ref<IAccountGroup[]>();
+// methods
+onMounted(async () => {
+  // update accounts
+  accountGroups.value = await getAccountsService();
+});
 </script>
 
 <template>
@@ -19,7 +32,7 @@ const { accountGroups } = defineProps(["accountGroups"]);
 
       <RouterLink
         v-for="(account, index) in accountGroup.accounts"
-        :to="`/accounts/${account.accountNumber}`"
+        :to="`${accounts}/${account.accountNumber}`"
         :key="index + account.accountNumber"
         :class="`account-row ${
           resizingData.width < 670 ? 'account-column' : ''
@@ -56,17 +69,13 @@ main {
 
     .account-row {
       text-decoration: none;
-      background: #000;
       background: rgba(0, 128, 0, 0.5);
       display: flex;
       gap: 1rem;
-      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
       border-radius: 0.2rem;
       cursor: pointer;
-
-      &:not(:nth-last-child(1)) {
-        margin-bottom: 0.25rem;
-      }
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 0.25rem;
 
       h2 {
         padding: 1rem 2.5rem;

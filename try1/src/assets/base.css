@@ -39,11 +39,10 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 0.5rem;
+  width: 0.3rem;
 }
 ::-webkit-scrollbar-thumb {
   background: #1199;
-  border-bottom: 0.5rem solid blue;
-  border-top: 0.5rem solid blue;
-  border-radius: 50px;
+  border: 0.5rem solid darkblue;
+  border-radius: 5rem;
 }

@@ -1,12 +1,17 @@
 /* 
-Purpose: returning an object of two properties {width, height} that help for styling by reflecting the current size of the document 
+Purpose: returning an object of two properties {width, height} that help for styling by reflecting the current size of the document according to the displaying screen
 Responsibility: Bassam hager
 */
-import { computed, ref, onMounted, onUnmounted, watch } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 
-type UseResizeType = {
-  doc: HTMLElement | { clientWidth: number; clientHeight: number };
-};
+interface IClient {
+  clientWidth: number;
+  clientHeight: number;
+}
+
+interface UseResizeType {
+  doc: HTMLElement | IClient;
+}
 
 export const useResize = ({
   doc = document.documentElement,
