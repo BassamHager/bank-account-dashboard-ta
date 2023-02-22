@@ -15,8 +15,11 @@ export const getTransactionsByAccountNumber = ({
   accountNumber: string;
 }): Awaitable<IAccountStatement> => {
   const foundTransactions = Object.values(transactions).find(
-    (transaction) => transaction.account.accountNumber === accountNumber
+    (transactionsGroup) =>
+      transactionsGroup.account.accountNumber === accountNumber
   ) as IAccountStatement;
+
+  // console.log(foundTransactions);
 
   return new Promise((resolve, reject) => {
     resolve(foundTransactions);

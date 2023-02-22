@@ -21,13 +21,13 @@ const getEmitValue = (emitValue: string, emitName: string) => {
 };
 const processTransactions = (): void => {
   // constants
-  const searchValue = searchingTerm.value.trim();
+  const searchValue = searchingTerm.value.trim().toLowerCase();
   const fromValue = filterFrom.value;
   const toValue = filterTo.value;
 
   // return all if no actions made
   if (!searchValue && !fromValue && !toValue) {
-    emit("updateTransactions", undefined);
+    emit("updateTransactions", rawTransactions);
     return;
   }
 

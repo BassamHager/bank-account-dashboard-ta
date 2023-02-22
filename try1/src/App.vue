@@ -1,30 +1,21 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
+// components
+import AppHeader from "@/components/AppHeader.vue";
 </script>
 
 <template>
   <main class="container">
-    <header>
-      <h1>Bank Account Overview</h1>
-    </header>
-
+    <AppHeader />
     <RouterView />
   </main>
 </template>
 
-<style scoped>
-header {
-  border-bottom: 1px solid #aaa;
-  text-align: center;
-  height: 10rem;
-  display: grid;
-  place-items: center;
-}
-
+<style lang="scss">
 .container {
   max-width: 100rem;
   min-width: 30rem;
-  margin: auto;
+  margin: 10rem auto;
   padding: 1rem;
   min-height: 100vh;
 }

@@ -1,65 +1,32 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
-// services
-import { getTransactionsByAccountNumber } from "@/services/getTransactions";
-// types
-import type { IAccountStatement } from "@/types/transaction";
+import { ref, defineProps } from "vue";
+import { RouterLink } from "vue-router";
 // composables
+import { formatAccountNumber } from "@/composable/useFormatter";
 import { useResize } from "@/composable/useResize";
 const resizingData = useResize({ doc: document.documentElement });
 // props
-const { accounts } = defineProps(["accounts"]);
-// emits
-const emit = defineEmits(["selectAccount"]);
-// data
-const accountStatement = ref<IAccountStatement>();
-const statementWithBalance = ref<IAccountStatement>();
-// methods
-const getAccountTransactions = async ({
-  account,
-  bal,
-}: {
-  account: string;
-  bal: number;
-}) => {
-  const accountDetails = await getTransactionsByAccountNumber({
-    accountNumber: account,
-  });
-  accountStatement.value = accountDetails;
-  combineBalanceAndAccountStatement({ bal });
-  emit("selectAccount", statementWithBalance.value);
-};
-const combineBalanceAndAccountStatement = ({ bal }: { bal: number }) => {
-  statementWithBalance.value = accountStatement.value;
-  if (statementWithBalance.value)
-    statementWithBalance.value.account.balance = bal;
-};
+const { accountGroups } = defineProps(["accountGroups"]);
 </script>
 
 <template>
   <main>
     <div
-      v-for="(accountGroup, index) in accounts"
+      v-for="(accountGroup, index) in accountGroups"
       :key="index + accountGroup.groupId"
     >
       <h1>{{ accountGroup.groupName }}</h1>
 
-      <div
+      <RouterLink
         v-for="(account, index) in accountGroup.accounts"
+        :to="`/accounts/${account.accountNumber}`"
         :key="index + account.accountNumber"
         :class="`account-row ${
-          resizingData.width < 600 ? 'account-column' : ''
+          resizingData.width < 670 ? 'account-column' : ''
         }`"
-        @click="
-          () =>
-            getAccountTransactions({
-              account: account.accountNumber,
-              bal: account.balance ? account.balance : account.bookBalance,
-            })
-        "
       >
         <h2>
-          {{ account.accountNumber }}
+          {{ formatAccountNumber(account.accountNumber) }}
         </h2>
         <h2>
           <span>
@@ -67,7 +34,7 @@ const combineBalanceAndAccountStatement = ({ bal }: { bal: number }) => {
           </span>
           {{ account.balance ? account.balance : account.bookBalance }}
         </h2>
-      </div>
+      </RouterLink>
     </div>
   </main>
 </template>
@@ -88,6 +55,7 @@ main {
     }
 
     .account-row {
+      text-decoration: none;
       background: #000;
       background: rgba(0, 128, 0, 0.5);
       display: flex;
@@ -103,8 +71,8 @@ main {
       h2 {
         padding: 1rem 2.5rem;
         width: 100%;
-        text-shadow: 1px 1px 4px black;
-
+        text-shadow: 1px 1px 1px #fff;
+        color: rgba(0, 0, 0, 0.3);
         span {
           color: rgba(128, 128, 128, 0.5);
           text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
@@ -118,6 +86,14 @@ main {
         transition: 0.5s;
         background: rgba(0, 128, 0, 0.6);
       }
+
+      /*
+      INTENTIONALLY LEFT COMMENT:
+       the below css rules can replace (.account-column) However, It's been kept only for demonstrating purposes demoing the know knowledge about composables */
+      // @media screen and (max-width: 40rem) {
+      //   flex-direction: column;
+      //   gap: 0;
+      // }
     }
 
     .account-column {
