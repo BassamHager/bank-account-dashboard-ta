@@ -7,17 +7,13 @@ const { placeholder, labelText, inputName, inputType } = defineProps([
   "inputName",
   "inputType",
 ]);
-// emits
+// emits // NOTE: I've made sure that these emits' names should match the inputName of this component whenever it's been embedded
 const emit = defineEmits(["search", "fromDate", "toDate"]);
 // data
 const input = ref<string>("");
-const isShowButton = computed(() => {
-  return input.value.trim().length > 0;
-});
+const isShowButton = computed(() => !!input.value.trim().length);
 // methods
-const onInput = () => {
-  emit(inputName, input.value);
-};
+const onInput = () => emit(inputName, input.value);
 const clearInput = () => {
   input.value = "";
   // reset search results to all as default

@@ -34,8 +34,8 @@ export const getAccountBalance = async ({
 }) => {
   let balance;
 
-  const groups = await getAccountsService();
-  groups.forEach((group) =>
+  const accountGroups = await getAccountsService();
+  accountGroups.forEach((group) =>
     group.accounts.forEach((account) => {
       if (account.accountNumber === accountNumber)
         balance = account.balance ? account.balance : account.bookBalance;

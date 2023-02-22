@@ -49,12 +49,19 @@ const processTransactions = (): void => {
         transaction.description.toLowerCase().includes(searchValue)
       );
     });
+
+    // if there's a searchValue & it's not returning results => should emit an empty array even if other inputs/filters have values
+    if (!searchValue.length) {
+      emit("updateTransactions", searched);
+      return;
+    }
   }
 
   // filtering process
   let filtered: ITransaction[] = [];
 
   if (fromValue) {
+    // if there's a searchValue => filter on top of the searched, else: filter the raw
     filtered = searchValue ? searched : rawTransactions;
     filtered = filtered.filter(
       (transaction) => transaction.bookDate >= fromValue
@@ -62,6 +69,7 @@ const processTransactions = (): void => {
   }
 
   if (toValue) {
+    // if there's a fromValue => filter on top of the filtered, else if there's a searchValue => filter the searched, else: filter the raw
     filtered = fromValue ? filtered : searchValue ? searched : rawTransactions;
     filtered = filtered.filter((transaction) => {
       return transaction.bookDate <= toValue;
@@ -69,14 +77,14 @@ const processTransactions = (): void => {
   }
 
   if (searchValue && !fromValue && !toValue) {
+    // if there's a searchValue & there's no filtering values => emit the searched
+    // NOTE: as we reached this line, we can make sure that searched.length > 0
     emit("updateTransactions", searched);
     return;
   }
 
-  const searchedAndFiltered: ITransaction[] =
-    fromValue || toValue ? filtered : rawTransactions;
-
-  emit("updateTransactions", searchedAndFiltered);
+  // reaching this line means that at least one of the filters (from | to) has a value => we emit their accumulated result
+  emit("updateTransactions", filtered);
 };
 </script>
 

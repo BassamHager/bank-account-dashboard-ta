@@ -2,7 +2,6 @@
 import { defineProps } from "vue";
 // props
 const { transaction } = defineProps(["transaction"]);
-// methods
 </script>
 
 <template>
