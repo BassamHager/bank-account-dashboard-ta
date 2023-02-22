@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 // components
 import TransactionList from "./TransactionList.vue";
 import AccountActions from "@/components/AccountActions.vue";
+// composables
+import { formatAccountNumber } from "@/composable/useFormatter";
 // types
+
 import type { ITransaction } from "@/types/transaction";
 // props
-const { accountStatement } = defineProps(["accountStatement"]);
-// emits
-const emit = defineEmits(["backToList"]);
+const { accountStatement, balance } = defineProps([
+  "accountStatement",
+  "balance",
+]);
 // data
-const transactions = ref<ITransaction[]>(accountStatement.transactions);
+const transactions = ref<ITransaction[]>();
 // methods
-const goBack = (): void => {
-  emit("backToList", false);
-};
-const formatAccountNumber = (text: string) => {
-  const textArr = text.split("");
-  textArr.splice(4, 0, " ");
-  textArr.splice(9, 0, " ");
-  return textArr.join("");
-};
+onMounted(() => {
+  transactions.value = accountStatement.transactions;
+});
 const getProcessedTransactions = (emitValue: ITransaction[]) => {
   if (emitValue) transactions.value = emitValue;
 };
@@ -39,7 +38,7 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
           <span>
             {{ accountStatement.account.currencyCode }}
           </span>
-          {{ accountStatement.account.balance }}
+          {{ balance }}
         </h2>
       </div>
 
@@ -51,13 +50,15 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
 
       <!-- transactions  -->
       <h2 class="total-transactions">
-        Total Transactions: {{ transactions.length }}
+        Total Transactions: {{ transactions?.length }}
       </h2>
       <TransactionList :transactions="transactions" />
     </div>
 
     <!-- go back to account-list -->
-    <button @click="goBack" class="back-button">Back</button>
+    <RouterLink class="back-button" to="/">
+      <button>Back</button>
+    </RouterLink>
   </div>
 </template>
 
@@ -122,6 +123,7 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
   }
 
   .back-button {
+    text-decoration: none;
     position: absolute;
     top: -3rem;
     left: -3rem;
@@ -151,6 +153,12 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
       width: 8rem;
       height: 10rem;
       padding-right: 1rem;
+    }
+
+    button {
+      background: transparent;
+      border: none;
+      color: #fff;
     }
   }
 }
