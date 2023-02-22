@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from "vue";
+import { defineProps, ref, onMounted, computed } from "vue";
 import { RouterLink } from "vue-router";
 // services
 import { getTransactionsByAccountNumber } from "@/services/getTransactions";
 import { getAccountBalance } from "@/services/getAccounts";
 // components
-import TransactionList from "@/components/transactions/TransactionList.vue";
 import AccountActions from "@/components/accounts/AccountActions.vue";
+import TransactionList from "@/components/transactions/TransactionList.vue";
 // composables
 import { formatAccountNumber } from "@/composable/useFormatter";
 // types
-import type { ITransaction } from "@/types/transaction";
+import type { ITransaction, IAccountStatement } from "@/types/transaction";
 // context
 import { accounts } from "@/context/constants";
-import type { IAccountStatement } from "../../types/transaction";
+
 // props
 const { accountId } = defineProps(["accountId"]);
 // data
 const accountStatement = ref<IAccountStatement>();
-const transactions = ref<ITransaction[]>();
+const updatedTransactions = ref<ITransaction[]>();
+const transactions = computed(
+  () => updatedTransactions.value || accountStatement.value?.transactions
+);
 const accountBalance = ref<number>();
 // methods
 onMounted(async () => {
@@ -28,10 +31,9 @@ onMounted(async () => {
   accountBalance.value = await getAccountBalance({
     accountNumber: accountId as string,
   });
-  transactions.value = accountStatement.value?.transactions;
 });
 const getProcessedTransactions = (emitValue: ITransaction[]) => {
-  if (emitValue) transactions.value = emitValue;
+  if (emitValue) return (updatedTransactions.value = emitValue);
 };
 </script>
 
@@ -40,12 +42,12 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
     <div class="account-details">
       <!-- header: account number & balance -->
       <div class="number-and-currency-container">
-        <h1 v-if="accountStatement?.account.accountNumber">
+        <h1 v-if="accountStatement?.account?.accountNumber">
           {{ formatAccountNumber(accountStatement.account.accountNumber) }}
         </h1>
 
         <h2>
-          <span v-if="accountStatement?.account.accountNumber">
+          <span v-if="accountStatement?.account?.accountNumber">
             {{ accountStatement.account.currencyCode }}
           </span>
           {{ accountBalance }}
@@ -54,14 +56,17 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
 
       <!-- actions -->
       <AccountActions
+        v-if="transactions"
         :rawTransactions="transactions"
         @updateTransactions="getProcessedTransactions"
       />
 
-      <!-- transactions  -->
+      <!-- total transactions  -->
       <h2 class="total-transactions">
-        Total Transactions: {{ transactions?.length }}
+        Total Transactions: {{ transactions?.length || 0 }}
       </h2>
+
+      <!-- transactions  -->
       <TransactionList :transactions="transactions" />
     </div>
 
