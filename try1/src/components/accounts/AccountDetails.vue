@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
+// services
+import { getTransactionsByAccountNumber } from "@/services/getTransactions";
+import { getAccountBalance } from "@/services/getAccounts";
 // components
 import TransactionList from "@/components/transactions/TransactionList.vue";
 import AccountActions from "@/components/accounts/AccountActions.vue";
@@ -10,16 +13,22 @@ import { formatAccountNumber } from "@/composable/useFormatter";
 import type { ITransaction } from "@/types/transaction";
 // context
 import { accounts } from "@/context/constants";
+import type { IAccountStatement } from "../../types/transaction";
 // props
-const { accountStatement, balance } = defineProps([
-  "accountStatement",
-  "balance",
-]);
+const { accountId } = defineProps(["accountId"]);
 // data
+const accountStatement = ref<IAccountStatement>();
 const transactions = ref<ITransaction[]>();
+const accountBalance = ref<number>();
 // methods
-onMounted(() => {
-  transactions.value = accountStatement.transactions;
+onMounted(async () => {
+  accountStatement.value = await getTransactionsByAccountNumber({
+    accountNumber: accountId as string,
+  });
+  accountBalance.value = await getAccountBalance({
+    accountNumber: accountId as string,
+  });
+  transactions.value = accountStatement.value?.transactions;
 });
 const getProcessedTransactions = (emitValue: ITransaction[]) => {
   if (emitValue) transactions.value = emitValue;
@@ -31,21 +40,21 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
     <div class="account-details">
       <!-- header: account number & balance -->
       <div class="number-and-currency-container">
-        <h1>
+        <h1 v-if="accountStatement?.account.accountNumber">
           {{ formatAccountNumber(accountStatement.account.accountNumber) }}
         </h1>
 
         <h2>
-          <span>
+          <span v-if="accountStatement?.account.accountNumber">
             {{ accountStatement.account.currencyCode }}
           </span>
-          {{ balance }}
+          {{ accountBalance }}
         </h2>
       </div>
 
       <!-- actions -->
       <AccountActions
-        :rawTransactions="accountStatement.transactions"
+        :rawTransactions="transactions"
         @updateTransactions="getProcessedTransactions"
       />
 
