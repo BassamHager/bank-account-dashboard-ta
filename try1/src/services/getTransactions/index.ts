@@ -19,10 +19,13 @@ export const getTransactionsByAccountNumber = ({
       transactionsGroup.account.accountNumber === accountNumber
   ) as IAccountStatement;
 
-  // console.log(foundTransactions);
-
-  return new Promise((resolve, reject) => {
-    resolve(foundTransactions);
-    reject("No transactions found!");
-  });
+  try {
+    return new Promise((resolve, reject) => {
+      resolve(foundTransactions);
+      reject("No transactions found!");
+    });
+  } catch (error) {
+    console.warn(error);
+    return {} as IAccountStatement;
+  }
 };

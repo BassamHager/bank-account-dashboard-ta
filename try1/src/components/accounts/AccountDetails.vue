@@ -2,13 +2,14 @@
 import { defineProps, ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 // components
-import TransactionList from "./TransactionList.vue";
-import AccountActions from "@/components/AccountActions.vue";
+import TransactionList from "@/components/transactions/TransactionList.vue";
+import AccountActions from "@/components/accounts/AccountActions.vue";
 // composables
 import { formatAccountNumber } from "@/composable/useFormatter";
 // types
-
 import type { ITransaction } from "@/types/transaction";
+// context
+import { accounts } from "@/context/constants";
 // props
 const { accountStatement, balance } = defineProps([
   "accountStatement",
@@ -56,7 +57,7 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
     </div>
 
     <!-- go back to account-list -->
-    <RouterLink class="back-button" to="/">
+    <RouterLink class="back-button" :to="accounts">
       <button>Back</button>
     </RouterLink>
   </div>

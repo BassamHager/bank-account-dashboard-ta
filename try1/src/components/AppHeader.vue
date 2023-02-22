@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
+// context
+import { accounts } from "@/context/constants";
 </script>
 
 <template>
   <header>
-    <RouterLink to="/">
+    <RouterLink :to="`${accounts}`">
       <h1>Bank Account Overview</h1>
     </RouterLink>
   </header>
