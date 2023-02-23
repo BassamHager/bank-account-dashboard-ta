@@ -155,6 +155,7 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
     border: none;
     box-shadow: 1px 1px 8px #000;
     background: hsla(0, 0%, 100%, 0.2);
+    background: #007066;
 
     &:hover {
       background: green;
