@@ -57,19 +57,18 @@ main {
   min-width: 30rem;
   margin-top: 1rem;
   z-index: 9;
+  // background: #bd960b;
 
   > div {
-    border: 1rem solid rgba(0, 128, 0, 0.3);
-
     h1 {
-      color: rgba(128, 128, 128, 0.5);
-      background: rgba(0, 128, 0, 0.3);
-      padding: 1rem;
+      color: #bd960b7e;
+      color: rgba(128, 128, 128, 0.6);
+      padding: 3rem 1rem 1rem;
     }
 
     .account-row {
       text-decoration: none;
-      background: rgba(0, 128, 0, 0.5);
+      background: rgba($color: #000, $alpha: 0.1);
       display: flex;
       gap: 1rem;
       border-radius: 0.2rem;
@@ -80,10 +79,10 @@ main {
       h2 {
         padding: 1rem 2.5rem;
         width: 100%;
-        text-shadow: 1px 1px 1px #fff;
+        text-shadow: 1px 1px 1px #bbb;
         color: rgba(0, 0, 0, 0.3);
         span {
-          color: rgba(128, 128, 128, 0.5);
+          color: rgba(128, 128, 128, 0.6);
           text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
           margin-right: 1rem;
         }
@@ -93,7 +92,10 @@ main {
         box-shadow: 1px 2px 4px rgba(128, 128, 128, 0.7);
         color: #fff;
         transition: 0.5s;
-        background: rgba(0, 128, 0, 0.6);
+        background: #1199;
+        h2 {
+          text-shadow: 1px 1px 1px #fff;
+        }
       }
 
       /*

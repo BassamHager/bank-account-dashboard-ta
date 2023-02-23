@@ -23,7 +23,7 @@ header {
   width: 100%;
   height: 10rem;
   z-index: 100;
-  background: rgba($color: #000, $alpha: 0.8);
+  background: rgba($color: #000, $alpha: 0.5);
 
   a {
     text-decoration: none;
@@ -33,5 +33,12 @@ header {
       color: #fff;
     }
   }
+}
+
+.darkBg {
+  background: #000;
+}
+.darkBg {
+  background: rgba($color: #000, $alpha: 0.2);
 }
 </style>
