@@ -23,7 +23,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
+  <main role="account-list">
     <div
       v-for="(accountGroup, index) in accountGroups"
       :key="index + accountGroup.groupId"

@@ -89,7 +89,7 @@ const processTransactions = (): void => {
 </script>
 
 <template>
-  <div class="actions-wrapper">
+  <div role="account-actions" class="actions-wrapper">
     <!-- search -->
     <Input
       placeholder="type..."
