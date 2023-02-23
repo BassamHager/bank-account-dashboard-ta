@@ -1,6 +1,11 @@
-# try1
+# Bank Account Dashboard
 
-This template should help get you started developing with Vue 3 in Vite.
+Is a mini Vue3 application applies most of the basic/common Vue concepts, uses vue-router for routing, vitest for unit testing, & styled with plain css & sass.
+
+## Demo - Screenshots:
+![accounts-view](./public/assets/images/accounts-view.png)
+
+![account-details](./public/assets/images/account-details-page.png)
 
 ## Recommended IDE Setup
 
