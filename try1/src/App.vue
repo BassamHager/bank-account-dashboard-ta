@@ -3,9 +3,10 @@ import { RouterView, useRouter } from "vue-router";
 import { onMounted } from "vue";
 // components
 import AppHeader from "@/components/AppHeader.vue";
-
+// router
+const router = useRouter();
 // methods
-onMounted(() => useRouter().push("/accounts"));
+onMounted(() => router.push("/accounts"));
 </script>
 
 <template>
