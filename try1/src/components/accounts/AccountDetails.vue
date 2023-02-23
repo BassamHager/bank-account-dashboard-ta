@@ -38,7 +38,7 @@ const getProcessedTransactions = (emitValue: ITransaction[]) => {
 </script>
 
 <template>
-  <div class="account-details-wrapper">
+  <div role="account-details" class="account-details-wrapper">
     <div class="account-details">
       <!-- header: account number & balance -->
       <div class="number-and-currency-container">

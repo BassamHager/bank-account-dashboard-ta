@@ -24,7 +24,7 @@ const clearInput = () => {
 </script>
 
 <template>
-  <div class="input-wrapper">
+  <div class="input-wrapper" role="custom-input">
     <label :for="inputName">{{ labelText }}</label>
     <input
       :id="inputName"
