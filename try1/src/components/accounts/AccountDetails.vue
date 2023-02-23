@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { RouterLink } from "vue-router";
 // services
 import { getTransactionsByAccountNumber } from "@/services/getTransactions";

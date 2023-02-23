@@ -5,7 +5,7 @@ import { accounts } from "@/context/constants";
 </script>
 
 <template>
-  <header>
+  <header role="app-header">
     <RouterLink :to="`${accounts}`">
       <h1>Bank Account Overview</h1>
     </RouterLink>

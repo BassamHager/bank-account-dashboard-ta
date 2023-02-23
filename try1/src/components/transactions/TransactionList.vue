@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 // components
 import TransactionDetails from "./TransactionDetails.vue";
 // props
