@@ -2,11 +2,11 @@
 
 Is a mini Vue3 application applies most of the basic/common Vue concepts, uses vue-router for routing, vitest & testing-library/vue for unit testing, & styled with plain css & sass.
 
-## Demo Screenshots:
+## Demo Screenshots: (Click an img to navigate to the live app)
 
-![account-details-page](src/assets/images/accounts-view.png)
+[![account-details-page](src/assets/images/accounts-view.png)](https://bank-account-dashboard-ta.vercel.app/accounts)
 ---
-![account-details-page](src/assets/images/account-details-page.png)
+[![account-details-page](src/assets/images/account-details-page.png)](https://bank-account-dashboard-ta.vercel.app/accounts)
 ---
 ### App Requirements
 
