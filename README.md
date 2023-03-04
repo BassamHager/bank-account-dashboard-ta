@@ -4,9 +4,9 @@ Is a mini Vue3 application applies most of the basic/common Vue concepts, uses v
 
 ## Demo Screenshots: (Click an img to navigate to the live app)
 
-[![account-details-page](src/assets/images/accounts-view.png)](https://bank-account-dashboard-ta.vercel.app/accounts)
+[![account-details-page](src/assets/images/accounts-view.png)](https://bank-account-dashboard-ta.vercel.app)
 ---
-[![account-details-page](src/assets/images/account-details-page.png)](https://bank-account-dashboard-ta.vercel.app/accounts)
+[![account-details-page](src/assets/images/account-details-page.png)](https://bank-account-dashboard-ta.vercel.app)
 ---
 ### App Requirements
 
